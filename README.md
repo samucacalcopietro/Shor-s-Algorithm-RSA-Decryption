@@ -1,6 +1,5 @@
 # Shor's Algorithm & RSA Decryption / Algoritmo de Shor e Decriptografia RSA
 
-
 Implementação prática do Algoritmo de Shor para fatoração de números inteiros via computação quântica, com aplicação na quebra de criptografia RSA.
 
 ## Estudo de Computação Quântica para implementação de algoritmo:
@@ -14,6 +13,8 @@ Implementação prática do Algoritmo de Shor para fatoração de números intei
 -De-criptografia de mensagem (input no código) utilizando inverso multiplicativo de mensagem já criptografada. 
 
 ## English (sorry for my english btw)
+
+Practical implementation of Shor's Algorithm for integer factorization via quantum computing, with application to breaking RSA encryption.
 
 Initial learning and experimentation stage, laying the groundwork for the algorithm's implementation:
 
