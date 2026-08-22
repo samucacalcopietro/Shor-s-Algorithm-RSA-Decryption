@@ -1,4 +1,4 @@
-# Shor-s-Algorithm & RSA Decryption / Algoritmo de Shor e Decriptografia RSA
+# Shor's Algorithm & RSA Decryption / Algoritmo de Shor e Decriptografia RSA
 
 
 Implementação prática do Algoritmo de Shor para fatoração de números inteiros via computação quântica, com aplicação na quebra de criptografia RSA.
