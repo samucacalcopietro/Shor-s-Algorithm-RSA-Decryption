@@ -145,10 +145,10 @@ while i < len(vetor_a):
 
 '==================  Decriptando Mensagem =================='
 
-#phi = (fator_1 - 1) * (fator_2 -1)      
-#chave_publica_e = int(input("Digite o e: "))   
-#d = pow(e, -1, phi)                      
-#C = int(input("Digite a mensagem criptografada: "))     
-#M = pow(C, d, N)          
+phi = (fator_1 - 1) * (fator_2 -1)      
+chave_publica_e = int(input("Digite o e: "))   
+d = pow(e, -1, phi)                      
+C = int(input("Digite a mensagem criptografada: "))     
+M = pow(C, d, N)          
 
-#print(M)
+print(M)
