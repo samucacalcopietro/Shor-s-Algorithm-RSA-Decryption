@@ -3,14 +3,14 @@
 Implementação prática do Algoritmo de Shor para fatoração de números inteiros via computação quântica, com aplicação na quebra de criptografia RSA.
 
 ## Estudo de Computação Quântica para implementação de algoritmo:
--Interações iniciais, criação de circuitos básicos;
--Transformada de Fourier Quântica;
--Estimação de Fase Quântica;
+- Interações iniciais, criação de circuitos básicos;
+- Transformada de Fourier Quântica;
+- Estimação de Fase Quântica;
 
 ## Implementação do Algoritmo de Shor:
--Sub-rotina quântica de fatoração em co-primos; 
--Sub-rotinas de verificação de casos triviais
--De-criptografia de mensagem (input no código) utilizando inverso multiplicativo de mensagem já criptografada. 
+- Sub-rotina quântica de fatoração em co-primos; 
+- Sub-rotinas de verificação de casos triviais
+- De-criptografia de mensagem (input no código) utilizando inverso multiplicativo de mensagem já criptografada. 
 
 ## English (sorry for my english btw)
 
