@@ -1,26 +1,19 @@
 """Algoritmo de Shor / Shor's Algorithm"""
 
 import math
-from qiskit import QuantumRegister, ClassicalRegister
+import random
+from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit, transpile
 from qiskit.visualization import plot_histogram
 from math import gcd
 from fractions import Fraction
-from qiskit import QuantumCircuit, transpile
-from qiskit.circuit.library import QFTGate
+from qiskit.circuit.library import QFTGate, UnitaryGate
 from qiskit.quantum_info import Operator
 from qiskit_aer import AerSimulator
 import numpy as np
-from qiskit.circuit.library import UnitaryGate
+
 
 N = int(input("Digite o N: ")) 
 L = math.ceil(math.log2(N))         #função que calcula Log2(N) 
-
-'==================  Grupo Multiplicativo (possíveis "a") =================='
-
-vetor_a = []
-for i in range(1,N):            
-    if gcd(i, N) == 1:
-        vetor_a.append(i)         #armazena os possíveis valores de "a" em um vetor do python
 
 '==================  Função cria matriz =================='
 
@@ -36,28 +29,19 @@ def cria_matriz(N, a, L):
     
     return M
 
-'==================  Declara matriz como operador =================='
+'==================  Preparando o Circuito =================='
 
-def cria_porta_controlada(M, expoente):            #declara função que cria exponenciação de porta
-    Up = np.linalg.matrix_power(M, expoente)       #linalg.matrix_power é uma função docula M^expoente
-    op = Operator(Up) #numpy cal
-    assert op.is_unitary(), f"U^{expoente} não é unitária!"
-    porta = op.to_instruction()              #transforma operador em instrução que qiskit entende
-    return porta.control(1)                         #.control(1) é uma função do qiskit que transforma um operador em porta controlada (no caso, por 1 qubit)
-
-i=0
+num_alvo = L  # Número de qubits alvo (L)
+num_controle = (L + 4)  # Número de qubits de controle (t)
 sucesso = False
-while i < len(vetor_a):
-    a = vetor_a[i]
+while True:
+    a = random.randint(2, N-1)
+    if gcd(a, N) != 1:      #"a" não é coprimo com N, sorteia outro
+        continue
     M = cria_matriz(N, a, L)
-    operador = Operator(M) 
-    assert operador.is_unitary(), "U não é unitária!"  # assert para verificar unitariedade de matriz
-
+    gate_U = UnitaryGate(M, label=f"U_{a}")
 
     '==================  Cria o circuito =================='
-
-    num_alvo = L  # Número de qubits alvo (L)
-    num_controle = (2*L)  # Número de qubits de controle (t)
 
     alvo = QuantumRegister(num_alvo, name="L")
     controle = QuantumRegister(num_controle, name="t")
@@ -71,16 +55,13 @@ while i < len(vetor_a):
     '==================  Aplica as operações =================='
 
     for j in range(num_controle):
-        expoente = 2 ** j
-        operacao_controlada = cria_porta_controlada(M, expoente)        #aplica porta conforme registrador |j>
-        shor.append(operacao_controlada, [controle[j]] + list(alvo))    #aplica o operador controlado e pede para mapear sua ação (operação, [qubit controle] + alvo)
-
+        U_power = gate_U.power(2**j).control(1)     #aplica as portas controladas nos j níveis
+        shor.append(U_power, [controle[j]] + list(alvo))
+       
     '==================  Aplica QFT inversa =================='
 
     shor.append(QFTGate(num_controle).inverse(), range(num_controle))      #porta do qiskit que aplica a qft QFTGate((qubits a serem aplicados), (bits clássicos))
-
-    '==================  Desenha circuito =================='
-    shor.measure(range(num_controle),range(num_controle))
+    shor.measure(range(num_controle), range(num_controle))
 
     '==================  Simulador =================='
     
@@ -107,7 +88,7 @@ while i < len(vetor_a):
         '==================  Frações contínuas para extrair r =================='
 
         fracao = l / 2**num_controle    #equivalente à fração l/2^t
-        frac = Fraction(fracao)         #função do python que calcula a menor simplificação
+        frac = Fraction(fracao).limit_denominator(N)         #função do python que calcula a menor simplificação
         r = frac.denominator
     
         '==================  Extraindo fatores primos =================='
@@ -115,7 +96,7 @@ while i < len(vetor_a):
         if r % 2 != 0:
             del counts[candidato_maior_pico]
             continue
-        exp_mod = int(a**(r//2) % N)
+        exp_mod = pow(a, r // 2, N)
         
         if exp_mod == N - 1:
             condicao_mudar_a = True         #achados fatores triviais, break quebra o laço atual para mudar de a
@@ -141,14 +122,25 @@ while i < len(vetor_a):
         print(f"para N = {N} e a = {a}, nossos fatores primos são {fator_1} e {fator_2}")
         break
     
-    i += 1
-
 '==================  Decriptando Mensagem =================='
 
 phi = (fator_1 - 1) * (fator_2 -1)      
 chave_publica_e = int(input("Digite o e: "))   
-d = pow(e, -1, phi)                      
+d = pow(chave_publica_e, -1, phi)                      
 C = int(input("Digite a mensagem criptografada: "))     
 M = pow(C, d, N)          
 
-print(M)
+
+digitos = []
+temp = M
+while temp > 0:
+    digitos.append(temp % 26)
+    temp //= 26
+
+digitos.reverse()
+
+mensagem = ""
+for d in digitos:
+    mensagem += chr(d + ord('A'))
+
+print(mensagem)
